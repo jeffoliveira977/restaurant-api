@@ -15,5 +15,8 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
+php artisan migrate --force
+php artisan db:seed --force
+
 # Run the default command (e.g., php-fpm or bash)
 exec "$@"
