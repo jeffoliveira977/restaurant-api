@@ -1,61 +1,113 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Desafio Técnico - API REST-FULL de restaurante
+Uma API RESTful em Laravel para gerenciar operações de restaurante, incluindo autenticação de funcionários, cardápio, mesas, clientes e pedidos.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Objetivo
 
-## About Laravel
+Você precisa de uma API REST-FULL para a utilização do restaurante, que pode ser utilizada para celular ou um SPA.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Sua aplicação DEVE:**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* Fazer login funcionário (garçom):
+    * Deve apenas visualizar seus pedidos
+* Fazer login funcionário (cozinheiro):
+    * Deve visualizar todos os pedidos em andamento e há fazer
+* Não precisa ter login cliente
+* Cadastro de Clientes (nome, CPF)
+* Fazer o cadastro das mesas do restaurante (número da mesa).
+* Fazer o cadastro de cardápios (cardápios com os itens do cardápio).
+* Fazer o pedido para a mesa do cliente.
+* Listar todos os pedidos (filtros: dia, semana, mês, por mesa, por cliente).
+* Listar pedidos em andamento, (para o garçom).
+* Listar pedidos há fazer e em andamento, (para o cozinheiro).
+* Listar por cliente, maior pedido, primeiro pedido, último pedido.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Tecnologias que devem estar presentes no desafio:**
 
-## Learning Laravel
+* Laravel (obrigatório)
+* MySQL ou MariaDB
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Pré-requisitos
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* Docker instalado.
+* Docker Compose instalado.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Como Executar
 
-## Laravel Sponsors
+1.  Clone o repositório.
+2.  Navegue até a raiz do projeto (onde o arquivo `compose.dev.yaml` está localizado)
+3.  Execute o seguinte comando no terminal: `docker-compose up -d`
+4.  A API estará acessível em `http://localhost:8000`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Acessando as Rotas da API
 
-### Premium Partners
+Todas as rotas da API estão prefixadas com `/api`.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### Autenticação
 
-## Contributing
+Para acessar as rotas protegidas, você precisará obter um token de autenticação obtido através da rota `POST /api/auth/login` que recebe as credenciais do funcionário (e-mail/usuário e senha) e retorna um token.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Após obter o token, você deve incluí-lo no cabeçalho de todas as requisições protegidas usando o esquema de autenticação Bearer:
 
-## Code of Conduct
+* **`POST /api/auth/logout`**: Desloga o usuário autenticado.
+* **`GET /api/auth/user`**: Retorna os dados do usuário autenticado
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Clientes
 
-## Security Vulnerabilities
+* **`GET /api/customers`**: Lista todos os clientes 
+* **`POST /api/customers`**: Cadastra um novo cliente 
+    * **Body (JSON):** `{"name": "Nome do Cliente", "cpf": "000.000.000-00"}`
+* **`GET /api/customers/{customer}`**: Exibe os detalhes de um cliente específico 
+* **`PUT /api/customers/{customer}`**: Atualiza os dados de um cliente específico 
+    * **Body (JSON):** `{"name": "Novo Nome", "cpf": "111.111.111-11"}`
+* **`DELETE /api/customers/{customer}`**: Exclui um cliente específico 
+* **`GET /api/customers/{customer}/orders/largest`**: Lista o maior pedido de um cliente específico 
+* **`GET /api/customers/{customer}/orders/first`**: Lista o primeiro pedido de um cliente específico 
+* **`GET /api/customers/{customer}/orders/latest`**: Lista o último pedido de um cliente específico 
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Mesas
 
-## License
+* **`GET /api/tables`**: Lista todas as mesas 
+* **`POST /api/tables`**: Cadastra uma nova mesa 
+    * **Body (JSON):** `{"number": 10}`
+* **`GET /api/tables/{table}`**: Exibe os detalhes de uma mesa específica 
+* **`PUT /api/tables/{table}`**: Atualiza os dados de uma mesa específica 
+    * **Body (JSON):** `{"number": 12, "status": "occupied"}`
+* **`DELETE /api/tables/{table}`**: Exclui uma mesa específica 
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Cardápio
+
+#### Categorias
+
+* **`GET /api/menu/categories`**: Lista todas as categorias do cardápio 
+* **`POST /api/menu/categories`**: Cadastra uma nova categoria 
+    * **Body (JSON):** `{"name": "Bebidas"}`
+* **`GET /api/menu/categories/{category}`**: Exibe os detalhes de uma categoria específica 
+* **`PUT /api/menu/categories/{category}`**: Atualiza os dados de uma categoria específica 
+    * **Body (JSON):** `{"name": "Sobremesas"}`
+* **`DELETE /api/menu/categories/{category}`**: Exclui uma categoria específica 
+
+#### Itens do Cardápio
+
+* **`GET /api/menu/items`**: Lista todos os itens do cardápio 
+* **`POST /api/menu/items`**: Cadastra um novo item do cardápio 
+    * **Body (JSON):** `{"category_id": 1, "name": "Pão de Queijo", "description": "...", "price": 6.50, "available": true, "preparation_time": 15}`
+* **`GET /api/menu/items/{item}`**: Exibe os detalhes de um item específico do cardápio 
+* **`PUT /api/menu/items/{item}`**: Atualiza os dados de um item específico do cardápio 
+    * **Body (JSON):** `{"price": 7.00, "available": false}`
+* **`DELETE /api/menu/items/{item}`**: Exclui um item específico do cardápio 
+
+### Pedidos
+
+* **`GET /api/orders/waiters`**: Lista os pedidos atribuídos ao garçom autenticado (requer autenticação, papel de garçom).
+* **`GET /api/orders/cooks`**: Lista os pedidos pendentes e em andamento para o cozinheiro (requer autenticação, papel de cozinheiro).
+* **`GET /api/orders`**: Lista todos os pedidos (requer autenticação, com filtros opcionais por query parameters).
+    * **Query Parameters (opcionais):**
+        * `period`: `day`, `week`, `month`
+        * `table_id`: ID da mesa
+        * `customer_id`: ID do cliente
+* **`POST /api/orders`**: Cria um novo pedido 
+    * **Body (JSON):** `{"table_id": 5, "customer_id": 2, "notes": "Sem cebola", "items": [{"menu_item_id": 1, "quantity": 2}, {"menu_item_id": 3, "quantity": 1}]}`
+* **`GET /api/orders/{order}`**: Exibe os detalhes de um pedido específico 
+* **`PUT /api/orders/{order}`**: Atualiza os dados de um pedido específico 
+    * **Body (JSON):** `{"status": "preparing", "notes": "Adicionar urgência"}`
+* **`DELETE /api/orders/{order}`**: Exclui um pedido específico 
